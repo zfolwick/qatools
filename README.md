@@ -64,7 +64,7 @@ USA-759
 this provides the compact output required.
 
 ## testrail examples
-In order to verify test steps are in sync with automation steps, I can list out the steps via `$ ./search.sh testrail --case=12345 -p | jq '.. | objects | .step | select(.)'` and get the list of steps:
+In order to verify test steps are in sync with automation steps, I can list out the steps via `$ ./search.sh testrail --case=12345 --steps` and get the list of steps:
 ```bash
 "Login into the app"
 "Select \"scan payment\"."
