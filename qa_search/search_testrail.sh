@@ -14,12 +14,13 @@ help() {
   testrail_usage
 
   echo "
-  -c|--case        the test case id to query
-  -r|--raw         displays unfiltered, raw json response
-  -v|--verbose     display the query url
-  -p|--pretty      format the response using jq
-  -h|--help        display this menu
-  -vvv             display the whole response
+  -c|--case           the test case id to query
+  -s|--steps          displays the test steps and expectations
+  -r|--raw            displays unfiltered, raw json response
+  -v|--verbose        display the query url
+  -p|--pretty         format the response using jq
+  -h|--help           display this menu
+  -vvv                display the whole response
   "
   exit 1
 }
@@ -32,11 +33,17 @@ search_testrail() {
   local echo_query_url=false
   local query=""
   local raw=false
+  local display_steps=false
+
   until test $# -eq 0  ; do
     case $1 in
       -c*|--case*)
         id=$1
         query="${id#*=}"
+        shift
+        ;;
+      -s|--steps)
+        display_steps=true
         shift
         ;;
       -v|--verbose) 
@@ -83,6 +90,11 @@ search_testrail() {
     exit 0
   fi
 
+  if $display_steps; then
+    echo $response | jq "$TESTRAIL_PRETTY_FILTER" | jq '.. | objects | { step: .step | select(.), expect: .expect } | "\(.step) >> \(.expect)"'
+    exit 0
+  fi
+
   if $pretty; then
     jq_pretty_script="$TESTRAIL_PRETTY_FILTER"
     echo $response | jq $jq_pretty_script
@@ -91,6 +103,9 @@ search_testrail() {
 
   if $raw; then
     echo $response
+    exit 0
   fi
+
+  echo $response
 }
 
