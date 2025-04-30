@@ -27,8 +27,25 @@ For Jira access, add the following into your .qaconfig file
 ```
 The above configuration expects you to set a jira token (see google if you don't know how to create one).  It also sets the project jql query text to `(project = USA OR project = "Television On Demand")`, which matches results that are either in the _USA_ project or in _Television On Demand_ project in jira; it then sets the JIRA domain to your specified domain, and the JIRA_ENDPOINT to v2 of the api.
 
+For Testrail access, add the following into your .qaconfig file:
+```ini
+[testrail]
+  TESTRAIL_USERNAME=username@email.com
+  TESTRAIL_PASSWORD=your-password
+  TESTRAIL_URL=https://your-testrail-domain/index.php
+  TESTRAIL_ENDPOINT=/api/v2/get_case/
+  TESTRAIL_PRETTY_FILTER={title: .title, id: .id, priority: .priority_id, test_data: .custom_test_data, comments: .custom_comments, steps: [ .. | objects | {step: .content | select(.), expect: .expected}]}
+```
+
+This sets the username and password, as well as the testrail URL and the api version.  This returns the get_case endpoint data.  It's parsed into a pretty-print format by using TESTRAIL_PRETTY_FILTER.
+
 # Installation
-Depends on `jq`, so have that installed. Built in Bash on Mac.  You can either wget this whole project's files, or clone it.  Wherever you place it on your PATH, include a symlink to the qa_search directory as well, as that'll be needed to interact with the data providers.
+Depends on `jq`, so have that installed. Built in Bash on Mac.  You can either wget this whole project's files, or clone it.  Wherever you place it on your PATH, include the qa_search directory as well, as that'll be needed to interact with the data providers. A viable script is:
+```bash
+cp search.sh ~/.local/bin/search
+chmod +x ~/.local/bin/search
+cp -R qa_search ~/.local/bin/
+```
 
 # Examples
 Search in jira for bugs related to a test case:
@@ -50,7 +67,7 @@ $ ./search.sh jira --query=C123456 --type=Bug --pretty
     {
       "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
       "id": "9876543",
-      "self": "https://sim.starbucks.com/rest/api/2/issue/9876543",
+      "self": "https://your-enterprise-jira-domain.com/rest/api/2/issue/9876543",
       "key": "USA-769"
     }
   ]
