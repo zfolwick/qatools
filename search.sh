@@ -2,6 +2,8 @@
 # read in config file.  First look for a local config, then look in the
 # ~/.local/bin directory, then look in the $HOME directory
 
+INSTALL_DIRECTORY="$HOME"/.local/bin
+
 if [[ -f ./.qaconfig ]]; then
   config_file="./.qaconfig"
 elif [[ -f "$HOME/.local/bin/.qaconfig" ]]; then
@@ -68,8 +70,8 @@ usage() {
 }
 
 options=()
-for data_provider_files in $(ls qa_search/); do
- source ./qa_search/"${data_provider_files}"
+for data_provider_files in $(ls "$INSTALL_DIRECTORY"/qa_search/); do
+ source "$INSTALL_DIRECTORY"/qa_search/"${data_provider_files}"
   tail=${data_provider_files#*_}
   data_provider=${tail%.sh}
   options+=($data_provider)
