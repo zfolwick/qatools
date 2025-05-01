@@ -2,7 +2,8 @@
 # read in config file.  First look for a local config, then look in the
 # ~/.local/bin directory, then look in the $HOME directory
 
-INSTALL_DIRECTORY="$HOME"/.local/bin
+#INSTALL_DIRECTORY="$HOME"/.local/bin
+INSTALL_DIRECTORY=.
 
 if [[ -f ./.qaconfig ]]; then
   config_file="./.qaconfig"
