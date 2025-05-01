@@ -27,7 +27,7 @@ verify_creds() {
   CREDENTIALS=$JENKINS_USER_PASS 
   if [[ ! -n $CREDENTIALS ]]; then
     echo "need \$JENKINS_USER_PASS set in .qaconfig. Place
-      JENKINS_USER_PASS=username@starbucks.com:your-password-here"
+      JENKINS_USER_PASS=username@email.com:your-password-here"
     jenkins_usage
     exit 1
   fi
