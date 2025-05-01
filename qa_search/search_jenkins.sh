@@ -47,8 +47,7 @@ search_jenkins() {
       -b*|--build*)
         if ! is_int "${1#*=}" == "0"; then
           echo "first argument must be the jenkins build number"
-          jenkins_usage
-          exit 1
+          jenkins_help 1
         fi
 
         build_number="${1#*=}"
@@ -85,6 +84,8 @@ search_jenkins() {
         jenkins_help 0
     esac
   done
+
+  [[ -z $build_number ]] && echo "need to set a build number" && jenkins_help 1
 
   JENKINS_REPORT_ENDPOINT=$JENKINS_HOST$JENKINS_JOB"/${build_number}/testReport/api/json"
 
