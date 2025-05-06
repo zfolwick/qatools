@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-[ -z "$TESTRAIL_USERNAME" ] && echo add TESTRAIL_USERNAME to .qaconfig file && exit 1
-[ -z "$TESTRAIL_PASSWORD" ] && echo add TESTRAIL_PASSWORD to .qaconfig file && exit 1
-[ -z "$TESTRAIL_URL" ] && echo add TESTRAIL_URL to .qaconfig file && exit 1
 
 testrail_usage() {
   echo "search testrail - by id
@@ -26,6 +23,9 @@ help() {
 }
 
 search_testrail() {
+  [ -z "$TESTRAIL_USERNAME" ] && echo add TESTRAIL_USERNAME to .qaconfig file && exit 1
+  [ -z "$TESTRAIL_PASSWORD" ] && echo add TESTRAIL_PASSWORD to .qaconfig file && exit 1
+  [ -z "$TESTRAIL_URL" ] && echo add TESTRAIL_URL to .qaconfig file && exit 1
   [ -z $1 ] && echo "add a test case id" && testrail_usage && exit 1
 
   local echo_verbose=false

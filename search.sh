@@ -33,7 +33,7 @@ while IFS= read -r line; do
   if [[ -n "$current_section" ]]; then
     IFS="=" read -r key value <<< "$line"
     key=$(echo "$key" | sed 's/ //g') #Remove spaces from key
-    value=$(echo "$value" | sed 's/ //g') #Remove spaces from value
+    value=$(echo "$value" | sed 's/^ .* $//g') #Remove leading and trailing spaces from value
     # Perform actions based on section and key-value pairs
     export "$key"="$value"
   fi

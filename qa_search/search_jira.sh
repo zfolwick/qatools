@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-[[ -z "${JIRA_TOKEN}" ]] && echo "JIRA_TOKEN environment variable is not set. Please set the JIRA_TOKEN" && exit 1
 
 jira_usage() {
   echo "jira query tool
@@ -22,6 +21,7 @@ jira_help() {
 }
 
 search_jira() {
+  [[ -z "${JIRA_TOKEN}" ]] && echo "JIRA_TOKEN environment variable is not set. Please set the JIRA_TOKEN" && exit 1
   if [[ "$@" =~ "-h" || "$@" =~ "--help" ]]; then
     jira_help 0
   fi
