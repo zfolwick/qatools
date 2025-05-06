@@ -48,7 +48,7 @@ search_jira() {
         shift 
         continue
         ;;
-      -t|--type*)
+      -t*|--type*)
         type_string="${1#*=}"
         shift
         continue
@@ -87,7 +87,7 @@ search_jira() {
 
   done
 
-  if [ -z $query_string ]; then echo "query not set" && echo "query: ${query_string}" && exit 1 ; fi
+  #if [ -z $query_string ]; then echo "query not set" && echo "query: ${query_string}" && exit 1 ; fi
 
   if ! [[ -z $type_string ]]; then 
     issue_type="%20AND%20issuetype=${type_string}" 
@@ -102,7 +102,6 @@ search_jira() {
   fi
 
   response=$(curl -s --request GET $query_url -H 'Authorization: Bearer '$JIRA_TOKEN) 
-
   [[ $response =~ "Error" ]] && echo "something wrong with the query" && echo $response
 
   if $raw; then
