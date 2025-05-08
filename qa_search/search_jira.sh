@@ -126,6 +126,6 @@ search_jira() {
     exit 0
   fi
 
-  echo $response
+  echo $response | jq '.issues[] | { jira_url: .self, key: .key }'
 }
 
