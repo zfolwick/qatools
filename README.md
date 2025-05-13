@@ -120,4 +120,11 @@ testrail test case repository for test case 12345.
 To add functionality, write a script and load it under _qatools/_ directory.
 Create a function called `search_myFunction`, and then in the command line
 you'll immediately have `search myFunction`.  To be included into this repo, it
-must have at minimum a `-h|--help` flag.
+must have at minimum a `-h|--help` flag, which points to a MY_PROVIDER_help with an exit code of 0.
+
+## required functions
+If you write a new data provider you need to have at least 3 functions, listed below. For the purposes of this README, we will call it MY_PROVIDER.
+
+1. `MY_PROVIDER_usage` - which displays minimal command line usage needs.
+2. `MY_PROVIDER_help` - which takes an argument as the exit code, displays the purpose of the tool, the usage, all command line flags, configuration requirements, relevant examples, and then exits with the provided argument's exit code.
+3. `search_MY_PROVIDER` - this implements all the relevant code needed to use MY_PROVIDER.
