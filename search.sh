@@ -32,6 +32,8 @@ while IFS= read -r line; do
    # Process key-value pairs within a section
   if [[ -n "$current_section" ]]; then
     IFS="=" read -r key value <<< "$line"
+    [ -z $key ] && echo "key not set in .qaconfig" && exit 1
+
     key=$(echo "$key" | sed 's/ //g') #Remove spaces from key
     value=$(echo "$value" | sed 's/^ .* $//g') #Remove leading and trailing spaces from value
     # Perform actions based on section and key-value pairs
