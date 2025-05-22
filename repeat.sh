@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
-# Version: 1239b6207775164bb47700e3d97f3dcbf9169388
+# Version: 29f504155b5a61188b7c8d09534206755949b83e
 # Author: Zachary Folwick
 # Date: 21 May 2025
 
 version() {
-  local script_name=$(basename $0)
-  local author_line=$(grep -n "Author:" $script_name | grep -v "grep" | cut -f1 -d:)
+  local author_line=$(grep -n "Author:" $(which $(basename $0)) | grep -v "grep" | cut -f1 -d:)
   VERSION=$(tail -n +$author_line $0 | shasum)
-  echo $script_name "${VERSION// */}"
+  echo $(basename $0) "${VERSION// */}"
 }
 
 usage() {
@@ -27,7 +26,7 @@ help() {
   "
 }
 
-[[ "$#" < 1 ]] && usage 1
+[[ "$#" -lt 1 ]] && usage 1
 
 get_args() {
   local NUM
@@ -61,9 +60,10 @@ get_args() {
   declare -a keys
   for ((i=0; i<$NUM; i++)) {
     echo "doing $COMMAND  ..."
-    eval "${COMMAND}"
+    output=$(eval "${COMMAND}")
     values+=($?)
     keys+=($i)
+    echo $output > "verification_run_$i.txt"
   }
 
   for idx in "${keys[@]}"; do
@@ -71,4 +71,4 @@ get_args() {
   done
 }
 
-get_args $@
+get_args "$@"
