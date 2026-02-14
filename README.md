@@ -1,7 +1,11 @@
 # qatools
 A collection of tools to make automation triage easier.
 
-# Capabilities
+
+# Search
+Run the search bar in different sources
+
+## Capabilities
 * cross-reference test cases among different sources
 * list test steps in manual test case repository
 * whatever else you can think of
@@ -16,14 +20,14 @@ I can list test case information with the manual test cases. Currently, I've
 added testrail and jira integration, so users can query testrail for test case
 IDs, or they can query jira for search terms.
 
-# Extending capabilities
+## Extending capabilities
 Adding new providers is relatively simple:
 1. Create a new file within qa_search/ directory, titled `search_myProvider.sh`
    and add your script to it.
 2. Add any configuration you want to your config file.
 
 
-# Configuration
+## Configuration
 This tool expects a config file called .qaconfig located in one of the
 following directories: ~/.local/bin, ~/, and the current working directory (not
 recommended).
@@ -57,7 +61,7 @@ This sets the username and password, as well as the testrail URL and the api
 version.  This returns the get_case endpoint data.  It's parsed into a
 pretty-print format by using TESTRAIL_PRETTY_FILTER.
 
-# Installation
+## Installation
 Depends on `jq`, so have that installed. Built in Bash on Mac.  You can either
 wget this whole project's files, or clone it.  Wherever you place it on your
 PATH, include the qa_search directory as well, as that'll be needed to interact
@@ -69,9 +73,9 @@ chmod +x ~/.local/bin/search
 cp -R qa_search ~/.local/bin/
 ```
 
-# Examples
+## Examples
 Search in jira for bugs related to a test case:
-## Simple jira searches
+### Simple jira searches
 ```bash
  $ ./search.sh jira --query=C123456 --type=Bug
 {"expand":"names,schema","startAt":0,"maxResults":50,"total":1,"issues":[{"expand":"operations,versionedRepresentations,editmeta,changelog,renderedFields","id":"9876543","self":"https://your-enterprise-jira-domain.com/rest/api/2/issue/9876543","key":"USA-769"}]}
@@ -102,7 +106,7 @@ USA-759
 ```
 this provides the compact output required.
 
-## testrail example
+### testrail example
 In order to verify test steps are in sync with automation steps, I can list out
 the steps via `$ ./search.sh testrail --case=12345 --steps` and get the list of
 steps:
@@ -116,15 +120,38 @@ steps:
 I now can simply read the test automation steps and compare to what is in the
 testrail test case repository for test case 12345.
 
-# Writing other providers
+## Writing other providers
 To add functionality, write a script and load it under _qatools/_ directory.
 Create a function called `search_myFunction`, and then in the command line
 you'll immediately have `search myFunction`.  To be included into this repo, it
 must have at minimum a `-h|--help` flag, which points to a MY_PROVIDER_help with an exit code of 0.
 
-## required functions
+### required functions
 If you write a new data provider you need to have at least 3 functions, listed below. For the purposes of this README, we will call it MY_PROVIDER.
 
 1. `MY_PROVIDER_usage` - which displays minimal command line usage needs.
 2. `MY_PROVIDER_help` - which takes an argument as the exit code, displays the purpose of the tool, the usage, all command line flags, configuration requirements, relevant examples, and then exits with the provided argument's exit code.
 3. `search_MY_PROVIDER` - this implements all the relevant code needed to use MY_PROVIDER.
+
+# Datadog CLI query tool
+
+Querying datadog from the terminal for automated purposes.
+
+## Installation
+Put the shell script somewhere on your PATH.  I like `~/.local/bin/`.
+
+Install the datadog environment variables in your .bashrc or .zshrc file:
+
+export DD_API_KEY=<api-key>
+export DD_APPLICATION_KEY=<application-key>
+
+## What it's doing
+Sending a curl request to 'https://api.datadoghq.com/api/v2/logs/events/search'.  If that's not correct, open ddq and modify the url.
+
+
+# Repeat
+runs a script a specified number of times. See `repeat.sh --help` for documentation. 
+
+# jgrep
+grep, but for json.  Returns the full path within the document to find a particular piece of text.
+

@@ -1,0 +1,134 @@
+#! /usr/bin/env bash
+
+LOCAL_DD_API_KEY="${DD_API_KEY}"
+LOCAL_DD_APPLICATION_KEY="${DD_APPLICATION_KEY}"
+
+usage () {
+  echo Datadog query tool
+  cat << EOF
+
+  -h|--help    this menu
+  -q|--query   query search term(s), e.g., '-q "search-query"'
+  -p|--pretty  pipes output to jq for pretty formatting
+  -f|--from    beginning time to query                    [default: "now-15m"]
+  -t|--to      ending time to query                       [default: "now]
+  -l|--limit   the quantity to limit the results to       [default: 25]
+
+  installation:
+    put this script into PATH and enter the following into your .bashrc or .zshrc
+
+     export DD_API_KEY="your-api-key"
+     export DD_APPLICATION_KEY="your-application-key"
+
+  then source your bashrc or zshrc.
+
+  example command:
+  $ ddq -q "my_search_query" --from "now-15m" --to "now" -p
+
+  example curl equivalent:
+  curl -sS --location 'https://api.datadoghq.com/api/v2/logs/events/search' \
+  --header "DD-API-KEY:\${LOCAL_DD_API_KEY}" \
+  --header "DD-APPLICATION-KEY:\${LOCAL_DD_APPLICATION_KEY}" \
+  --header 'Content-Type: application/json' \
+  --data '{
+     "filter": {
+       "from": "now-15m",
+       "to": "now",
+       "query": "my_search_query"
+     },
+     "page": { "limit": 25 },
+     "sort": "-timestamp"
+   }'
+EOF
+}
+
+PRETTY=false
+QUERY=""
+FROM_STRING="now-15m"
+TO_STRING="now"
+LIMIT_QTY=25
+while [[ "$1" != "" ]]; do
+  case $1 in
+    -q|--query)
+      # Ensure a value exists
+      if [[ $# -lt 2 ]]; then
+        echo "Error: $1 requires a value" >&2
+        exit 1
+      fi
+      shift
+      QUERY="$1"
+      shift
+      ;;
+
+    --query=*)
+      QUERY="${1#*=}"
+      shift
+      ;;
+
+    -h|--help)
+      usage
+      exit 0
+      ;;
+
+    -p|--pretty)
+      PRETTY=true
+      shift
+      ;;
+
+    -f|--from)
+      shift
+      FROM_STRING="$1"
+      shift
+      ;;
+
+    -t|--to)
+      shift
+      TO_STRING="$1"
+      shift
+      ;;
+
+    --from=*)
+      shift
+      FROM_STRING="${1#*=}"
+      shift
+      ;;
+
+    --to=*)
+      shift
+      TO_STRING="${1#*=}"
+      shift
+      ;;
+    
+    -l|--limit)
+      shift
+      LIMIT_QTY="$1"
+      shift
+      ;;
+
+  esac
+done
+
+query_datadog() {
+  curl -sS --location 'https://api.datadoghq.com/api/v2/logs/events/search' \
+  --header "DD-API-KEY:${LOCAL_DD_API_KEY}" \
+  --header "DD-APPLICATION-KEY:${LOCAL_DD_APPLICATION_KEY}" \
+  --header 'Content-Type: application/json' \
+  --data @<(cat <<EOF 
+{
+  "filter": {
+    "from": "${FROM_STRING}",
+    "to": "${TO_STRING}",
+    "query": "${QUERY}"
+  },
+  "page": { "limit": "${LIMIT_QTY}" },
+  "sort": "-timestamp"
+}
+EOF
+)
+}
+
+if $PRETTY; then
+  query_datadog | jq 
+else
+  query_datadog
+fi

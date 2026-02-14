@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [[ $1 == *"-h"* ]]; then
+  printf "%s\n" "greps through a json text and then outputs the json paths that have the pattern in either the key or the value."
+  return
+fi
+[[ $# -lt 2 ]] && echo "needs 2 arguments: pattern and filename." && return
+
+function jgrep() {
+
+  local PATTERN
+  PATTERN="$1"
+  local FILENAME
+  FILENAME="$2"
+
+  jq -r 'paths(scalars) as $p | "\($p | join(".")) = \(getpath($p) | @json)"' $FILENAME | $(which grep) $PATTERN
+
+}
+
+jgrep "$@"
